@@ -8,7 +8,7 @@
             <function>avg</function>
             <retention>
                 <age>0</age>
-                <precision>60</precision>
+                <precision>15</precision>
             </retention>
             <retention>
                 <age>2592000</age>
