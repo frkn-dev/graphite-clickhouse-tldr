@@ -1,0 +1,29 @@
+[carbon]
+address = "carbon-clickhouse:2003"
+
+[clickhouse]
+address = "http://clickhouse:8123"
+
+[app]
+#env = "dev"
+#hostname = "localhost"
+api_mode = true
+#metrics_mode = true
+iface = "en0"
+#metrics_delay = 1
+api_webhook_token = "my_token"
+#api_webhook_enabled = true
+
+[xray]
+enabled = true
+vmess_port = 8081
+vless_port = 2053
+ss_port = 1080
+
+[wg]
+#enabled = true
+#port = 51820
+
+[logging]
+#level = "info"  
+#file = "pony.log"

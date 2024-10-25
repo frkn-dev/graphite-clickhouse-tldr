@@ -4,7 +4,8 @@ services:
     image: clickhouse/clickhouse-server:21.8
     user: "${UID:?You must do 'export UID' to launch}"
     ports:
-    - "9000:9000" 
+    - "9000:9000"
+    - "8123:8123" 
     volumes:
     - "./rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
     - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -62,6 +63,54 @@ services:
       interval: 10s
       timeout: 1s
       retries: 3
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - grafana
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - graphite-clickhouse-tldr
+    labels:
+      - "com.github.nginx-proxy.nginx=true"
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - graphite-clickhouse-tldr
+    environment:
+      - VIRTUAL_HOST=m.frkn.org
+      - LETSENCRYPT_HOST=gm.frkn.org
+      - LETSENCRYPT_EMAIL=the2pizza@pm.me
+    depends_on:
+      - nginx
+
+  pony-api:
+    image: frknorg/pony:latest
+    container_name: pony-api
+    networks:
+      - graphite-clickhouse-tldr
+    depends_on:
+      - clickhouse
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./config-api.toml:/app/config.toml
+    command: ["/app/pony", "--config", "/app/config.toml"]
+
 
 networks:
   graphite-clickhouse-tldr:
