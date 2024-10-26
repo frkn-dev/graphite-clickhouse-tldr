@@ -95,6 +95,7 @@ services:
       - VIRTUAL_HOST=m.frkn.org
       - LETSENCRYPT_HOST=gm.frkn.org
       - LETSENCRYPT_EMAIL=the2pizza@pm.me
+      - NGINX_PROXY_CONTAINER=nginx
     depends_on:
       - nginx
 
