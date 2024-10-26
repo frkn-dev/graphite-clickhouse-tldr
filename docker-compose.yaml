@@ -73,11 +73,16 @@ services:
     volumes:
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www/:/var/www/certbot/:ro
+    networks:
+      - graphite-clickhouse-tldr
+      
   certbot:
     image: certbot/certbot:latest
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
+    networks:
+      - graphite-clickhouse-tldr
 
   pony-api:
     image: frknorg/pony:latest
