@@ -75,14 +75,13 @@ services:
     restart: always
     volumes:
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl:ro
     networks:
       - graphite-clickhouse-tldr
 
   certbot:
     image: certbot/certbot:latest
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
     networks:
       - graphite-clickhouse-tldr
