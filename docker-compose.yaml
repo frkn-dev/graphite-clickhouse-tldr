@@ -3,9 +3,6 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:21.8
     user: "${UID:?You must do 'export UID' to launch}"
-    ports:
-    - "9000:9000"
-    - "8123:8123" 
     volumes:
     - "./rollup.xml:/etc/clickhouse-server/config.d/rollup.xml"
     - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
@@ -34,17 +31,6 @@ services:
     - "./graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
     networks:
       - graphite-clickhouse-tldr
-  
-  graphite-web:
-    image: graphiteapp/graphite-statsd:1.1.8-1
-    volumes:
-    - "./graphiteweb_entrypoint.sh:/entrypoint.sh"
-    - "./graphiteweb.conf:/opt/graphite/webapp/graphite/local_settings.py"
-    entrypoint: /entrypoint.sh
-    networks:
-      - graphite-clickhouse-tldr
-    ports:
-    - "8085:80" # http ui
 
   grafana:
     image: grafana/grafana:latest
@@ -54,8 +40,6 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
       - graphite-clickhouse-tldr
-    ports:
-      - "3000:3000"
     depends_on:
       - graphite-web
     volumes:
@@ -93,8 +77,6 @@ services:
       - graphite-clickhouse-tldr
     depends_on:
       - clickhouse
-    ports:
-      - "5005:5005"
     volumes:
       - ./config-api.toml:/app/config.toml
     command: ["/app/pony", "--config", "/app/config.toml"]
