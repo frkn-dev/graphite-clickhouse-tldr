@@ -41,7 +41,7 @@ services:
     networks:
       - graphite-clickhouse-tldr
     depends_on:
-      - graphite-web
+      - clickhouse
     volumes:
       - ./resources/data/grafana:/var/lib/grafana
     restart: unless-stopped
