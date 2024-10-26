@@ -12,6 +12,7 @@ services:
     - "./data/clickhouse:/var/lib/clickhouse"
     networks:
       - graphite-clickhouse-tldr
+  
   carbon-clickhouse:
     image: ghcr.io/lomik/carbon-clickhouse:0.11.2
     user: "${UID:?You must do 'export UID' to launch}"
@@ -25,6 +26,7 @@ services:
     - "2006:2006" # prometheus remote write
     networks:
       - graphite-clickhouse-tldr
+  
   graphite-clickhouse:
     image: ghcr.io/lomik/graphite-clickhouse:0.13.2
     volumes:
@@ -32,6 +34,7 @@ services:
     - "./graphite-clickhouse.conf:/etc/graphite-clickhouse/graphite-clickhouse.conf"
     networks:
       - graphite-clickhouse-tldr
+  
   graphite-web:
     image: graphiteapp/graphite-statsd:1.1.8-1
     volumes:
@@ -64,7 +67,7 @@ services:
       timeout: 1s
       retries: 3
 
-   nginx:
+  nginx:
     image: nginx:latest
     ports:
       - 80:80
@@ -75,7 +78,7 @@ services:
       - ./certbot/www/:/var/www/certbot/:ro
     networks:
       - graphite-clickhouse-tldr
-      
+
   certbot:
     image: certbot/certbot:latest
     volumes:
