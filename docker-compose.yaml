@@ -64,40 +64,20 @@ services:
       timeout: 1s
       retries: 3
 
-  nginx:
+   nginx:
     image: nginx:latest
-    container_name: nginx
     ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - grafana
+      - 80:80
+      - 443:443
+    restart: always
     volumes:
-      - ./nginx/certs:/etc/nginx/certs
-      - ./nginx/vhost.d:/etc/nginx/vhost.d
-      - ./nginx/html:/usr/share/nginx/html
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - graphite-clickhouse-tldr
-    labels:
-      - "com.github.nginx-proxy.nginx=true"
-
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: letsencrypt
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+  certbot:
+    image: certbot/certbot:latest
     volumes:
-      - ./nginx/certs:/etc/nginx/certs
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - graphite-clickhouse-tldr
-    environment:
-      - VIRTUAL_HOST=m.frkn.org
-      - LETSENCRYPT_HOST=gm.frkn.org
-      - LETSENCRYPT_EMAIL=the2pizza@pm.me
-      - NGINX_PROXY_CONTAINER=nginx
-    depends_on:
-      - nginx
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
 
   pony-api:
     image: frknorg/pony:latest
